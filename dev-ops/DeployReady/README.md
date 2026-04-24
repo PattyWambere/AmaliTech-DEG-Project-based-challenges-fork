@@ -58,10 +58,143 @@ Do not change the application logic. Your work is everything around it.
 - Define the app as a service in `docker-compose.yml`.
 - Map port `3000` on the host to the container.
 - Pass the `PORT` variable via an `.env` file (include a `.env.example` with placeholder values).
-- Running the following must start a working API:
-  ```bash
-  docker compose up --build
-  ```
+- Running the fo# Kora Analytics API — DeployReady
+
+A production-ready deployment of the Kora Analytics Node.js API, built as part
+of the AmaliTech DevOps engineering challenge.
+
+**Live endpoint:** `http://<EC2_PUBLIC_IP>/health`
+
+---
+
+## What Was Built
+
+| Part  | Deliverable                                   | Status |
+| ----- | --------------------------------------------- | ------ |
+| 1     | `Dockerfile` + `docker-compose.yml`           | ✅     |
+| 2     | `.github/workflows/deploy.yml` CI/CD pipeline | ✅     |
+| 3     | AWS EC2 deployment + `DEPLOYMENT.md`          | ✅     |
+| Bonus | Automatic rollback on failed health check     | ✅     |
+
+---
+
+## Architecture
+
+```
+GitHub push → Actions (Test → Build → Push → Deploy) → AWS EC2 (Docker)
+```
+
+- **Registry:** GitHub Container Registry (GHCR)
+- **Images tagged** with the Git commit SHA for full traceability
+- **Rollback:** If `/health` doesn't return 200 after deploy, the previous
+  image is automatically restored
+
+---
+
+## Quick Start (Local)
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/<your-username>/DeployReady.git
+cd DeployReady
+
+# 2. Create your .env file
+cp .env.example .env
+
+# 3. Build and start
+docker compose up --build
+```
+
+Test the endpoints:
+
+```bash
+curl http://localhost:3000/health
+# {"status":"ok"}
+
+curl http://localhost:3000/metrics
+# {"uptime_seconds":12,"memory_mb":42,"node_version":"v20.x.x"}
+
+curl -X POST http://localhost:3000/data \
+  -H "Content-Type: application/json" \
+  -d '{"shipment_id":"KOR-001","status":"in_transit"}'
+# {"received":{"shipment_id":"KOR-001","status":"in_transit"}}
+```
+
+---
+
+## Project Structure
+
+```
+DeployReady/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # CI/CD: test → build → push → deploy
+├── app/
+│   ├── index.js              # Express API (do not modify)
+│   ├── index.test.js         # Jest + Supertest tests
+│   └── package.json
+├── .env.example              # Environment variable template
+├── .gitignore
+├── docker-compose.yml        # Local development orchestration
+├── Dockerfile                # Multi-stage build (deps → test → production)
+├── DEPLOYMENT.md             # AWS setup and operations guide
+└── README.md                 # This file
+```
+
+---
+
+## CI/CD Pipeline
+
+The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on every
+push to `main`:
+
+1. **Test** — `npm test` via Jest. Failure stops the pipeline.
+2. **Build** — Docker multi-stage build, tagged with the commit SHA.
+3. **Push** — Image pushed to `ghcr.io/<owner>/kora-analytics-api`.
+4. **Deploy** — SSH into EC2, pull new image, restart container, verify
+   `/health`, rollback if unhealthy.
+
+### Required GitHub Secrets
+
+| Secret        | Description                        |
+| ------------- | ---------------------------------- |
+| `EC2_HOST`    | EC2 public IP address              |
+| `EC2_USER`    | SSH username (`ec2-user`)          |
+| `EC2_SSH_KEY` | Private key contents (`.pem` file) |
+
+---
+
+## Decisions Made
+
+**Multi-stage Dockerfile** — Separates dependency installation, test execution,
+and the final production image. The production image contains only the app
+code and production `node_modules`, keeping it lean and without test tooling.
+
+**Non-root container user** — A dedicated `appuser` is created inside the
+container. Running as root inside a container is a security risk even with
+namespace isolation.
+
+**Commit SHA image tags** — Every image is immutable and tied to a specific
+commit. This makes rollbacks deterministic and debugging straightforward.
+
+**GHCR over ECR** — GitHub Container Registry requires no additional AWS
+permissions and integrates natively with `GITHUB_TOKEN`, reducing the secret
+surface area.
+
+**Automatic rollback** — The deploy script checks `/health` after every deploy.
+A non-200 response triggers an immediate rollback to the last known-good image,
+minimising downtime without human intervention.
+
+---
+
+## Documentation
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for full AWS setup instructions,
+operational runbooks, and the architecture diagram.llowing must start a working API:
+
+```bash
+docker compose up --build
+```
 
 ---
 
