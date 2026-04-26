@@ -232,3 +232,67 @@ resource "aws_instance" "web" {
     Project = "vela-payments"
   }
 }
+
+
+# ─────────────────────────────────────────────
+# PART 3 — DATABASE
+# ─────────────────────────────────────────────
+
+resource "aws_security_group" "db" {
+  name        = "db-sg"
+  description = "Allow PostgreSQL only from web-sg"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "PostgreSQL from web tier only"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "db-sg"
+    Project = "vela-payments"
+  }
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "vela-db-subnet-group"
+  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+
+  tags = {
+    Name    = "vela-db-subnet-group"
+    Project = "vela-payments"
+  }
+}
+
+resource "aws_db_instance" "main" {
+  identifier        = "vela-postgres"
+  engine            = "postgres"
+  engine_version    = "15"
+  instance_class    = "db.t3.micro"
+  allocated_storage = 20
+
+  db_name  = "veladb"
+  username = var.db_username
+  password = var.db_password
+
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+  vpc_security_group_ids = [aws_security_group.db.id]
+
+  publicly_accessible = false
+  skip_final_snapshot = true
+
+  tags = {
+    Name    = "vela-rds"
+    Project = "vela-payments"
+  }
+}
