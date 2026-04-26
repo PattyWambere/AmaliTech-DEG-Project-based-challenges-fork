@@ -1,6 +1,6 @@
 # DeployReady
 
-This challenge is designed to test your understanding of core DevOps practices: containerisation, automated pipelines, and cloud deployment.
+This challenge is designed to test the understanding of core DevOps practices: containerisation, automated pipelines, and cloud deployment.
 
 ---
 
