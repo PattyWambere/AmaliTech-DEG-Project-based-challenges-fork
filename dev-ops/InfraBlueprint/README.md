@@ -1,5 +1,24 @@
 # InfraBlueprint — Vela Payments Infrastructure
 
+## ⚠️ Deployment Note
+
+This infrastructure was not deployed to a live AWS environment due to the
+unavailability of a bank card required for AWS account registration. This
+situation was communicated directly to the AmaliTech team prior to submission
+and confirmed acceptable.
+
+All Terraform configuration is complete and correct across all 5 parts
+(Networking, Compute, Database, Storage, Outputs). The code has been validated
+locally using `terraform validate` which confirms the configuration is valid.
+
+A reviewer can verify correctness by running:
+
+```bash
+terraform init -backend=false
+terraform validate
+terraform plan -var-file="example.tfvars"
+```
+
 Terraform configuration that provisions a two-tier web application infrastructure for Vela Payments on AWS, reproducibly and from scratch with a single command.
 
 ---
@@ -54,6 +73,7 @@ Terraform configuration that provisions a two-tier web application infrastructur
 ```
 
 **Security relationships:**
+
 - `web-sg` → inbound HTTP/HTTPS from `0.0.0.0/0`, SSH from your IP only
 - `db-sg` → inbound port 5432 **only** from `web-sg` (not the internet)
 - S3 bucket → accessible only via the EC2's IAM role (`s3:GetObject`, `s3:PutObject`)
@@ -145,14 +165,14 @@ terraform destroy -var-file="terraform.tfvars"
 
 ## Variable Reference
 
-| Variable | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `aws_region` | `string` | Yes | — | AWS region for all resources (e.g. `us-east-1`) |
-| `vpc_cidr` | `string` | No | `10.0.0.0/16` | CIDR block for the VPC |
-| `allowed_ssh_cidr` | `string` | Yes | — | Your IP in CIDR notation for SSH access (e.g. `1.2.3.4/32`). Never use `0.0.0.0/0`. |
-| `db_username` | `string` | Yes | — | Master username for the RDS PostgreSQL instance. Marked `sensitive`. |
-| `db_password` | `string` | Yes | — | Master password for the RDS PostgreSQL instance. Min 8 chars. Marked `sensitive`. |
-| `s3_bucket_name` | `string` | Yes | — | Globally unique name for the S3 bucket. Lowercase, 3–63 chars, no underscores. |
+| Variable           | Type     | Required | Default       | Description                                                                         |
+| ------------------ | -------- | -------- | ------------- | ----------------------------------------------------------------------------------- |
+| `aws_region`       | `string` | Yes      | —             | AWS region for all resources (e.g. `us-east-1`)                                     |
+| `vpc_cidr`         | `string` | No       | `10.0.0.0/16` | CIDR block for the VPC                                                              |
+| `allowed_ssh_cidr` | `string` | Yes      | —             | Your IP in CIDR notation for SSH access (e.g. `1.2.3.4/32`). Never use `0.0.0.0/0`. |
+| `db_username`      | `string` | Yes      | —             | Master username for the RDS PostgreSQL instance. Marked `sensitive`.                |
+| `db_password`      | `string` | Yes      | —             | Master password for the RDS PostgreSQL instance. Min 8 chars. Marked `sensitive`.   |
+| `s3_bucket_name`   | `string` | Yes      | —             | Globally unique name for the S3 bucket. Lowercase, 3–63 chars, no underscores.      |
 
 ---
 
@@ -160,11 +180,11 @@ terraform destroy -var-file="terraform.tfvars"
 
 After `terraform apply`, the following values are printed:
 
-| Output | Description |
-|---|---|
-| `ec2_public_ip` | Public IP of the EC2 web server |
-| `rds_endpoint` | Connection endpoint for the RDS PostgreSQL instance |
-| `s3_bucket_name` | Name of the S3 static assets bucket |
+| Output           | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `ec2_public_ip`  | Public IP of the EC2 web server                     |
+| `rds_endpoint`   | Connection endpoint for the RDS PostgreSQL instance |
+| `s3_bucket_name` | Name of the S3 static assets bucket                 |
 
 ---
 
