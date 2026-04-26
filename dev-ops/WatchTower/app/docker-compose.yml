@@ -1,21 +1,39 @@
+version: "3.9"
+
 services:
   order-service:
     build: ./order-service
     ports:
-      - "3001:3001"
+      - "${ORDER_SERVICE_PORT}:3001"
     environment:
       - PORT=3001
+    env_file:
+      - .env
+    networks:
+      - watchtower-net
 
   tracking-service:
     build: ./tracking-service
     ports:
-      - "3002:3002"
+      - "${TRACKING_SERVICE_PORT}:3002"
     environment:
       - PORT=3002
+    env_file:
+      - .env
+    networks:
+      - watchtower-net
 
   notification-service:
     build: ./notification-service
     ports:
-      - "3003:3003"
+      - "${NOTIFICATION_SERVICE_PORT}:3003"
     environment:
       - PORT=3003
+    env_file:
+      - .env
+    networks:
+      - watchtower-net
+
+networks:
+  watchtower-net:
+    driver: bridge
