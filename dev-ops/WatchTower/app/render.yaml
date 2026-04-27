@@ -4,27 +4,30 @@ services:
     runtime: docker
     dockerfilePath: ./order-service/Dockerfile
     dockerContext: ./order-service
+    plan: free
     envVars:
       - key: PORT
-        value: "3001"
+        value: 3001
 
   - type: web
     name: tracking-service
     runtime: docker
     dockerfilePath: ./tracking-service/Dockerfile
     dockerContext: ./tracking-service
+    plan: free
     envVars:
       - key: PORT
-        value: "3002"
+        value: 3002
 
   - type: web
     name: notification-service
     runtime: docker
     dockerfilePath: ./notification-service/Dockerfile
     dockerContext: ./notification-service
+    plan: free
     envVars:
       - key: PORT
-        value: "3003"
+        value: 3003
 
   - type: web
     name: prometheus
