@@ -6,7 +6,7 @@ services:
     dockerContext: ./order-service
     envVars:
       - key: PORT
-        value: 3001
+        value: "3001"
 
   - type: web
     name: tracking-service
@@ -15,7 +15,7 @@ services:
     dockerContext: ./tracking-service
     envVars:
       - key: PORT
-        value: 3002
+        value: "3002"
 
   - type: web
     name: notification-service
@@ -24,19 +24,21 @@ services:
     dockerContext: ./notification-service
     envVars:
       - key: PORT
-        value: 3003
+        value: "3003"
 
   - type: web
     name: prometheus
     runtime: image
     image:
       url: docker.io/prom/prometheus:latest
+    plan: free
 
   - type: web
     name: grafana
     runtime: image
     image:
       url: docker.io/grafana/grafana:latest
+    plan: free
     envVars:
       - key: GF_SECURITY_ADMIN_PASSWORD
         value: admin
