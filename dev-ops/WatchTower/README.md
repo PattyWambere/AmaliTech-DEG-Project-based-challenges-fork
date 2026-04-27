@@ -43,6 +43,7 @@ WatchTower is a DevOps observability solution developed for **Reyla Logistics**,
                      ▼
                🚨 Alerts Engine
 ```
+you can view the full architecture design here: https://drive.google.com/file/d/13YMFronEwy5AZ5JL6X8FoE57ofTZA3rV/view
 
 ---
 
