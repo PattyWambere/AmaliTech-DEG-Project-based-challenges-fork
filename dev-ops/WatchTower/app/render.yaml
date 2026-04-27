@@ -2,6 +2,7 @@ services:
   - type: web
     name: order-service
     runtime: docker
+    rootDir: dev-ops/WatchTower/app
     dockerfilePath: ./order-service/Dockerfile
     dockerContext: ./order-service
     plan: free
@@ -12,6 +13,7 @@ services:
   - type: web
     name: tracking-service
     runtime: docker
+    rootDir: dev-ops/WatchTower/app
     dockerfilePath: ./tracking-service/Dockerfile
     dockerContext: ./tracking-service
     plan: free
@@ -22,6 +24,7 @@ services:
   - type: web
     name: notification-service
     runtime: docker
+    rootDir: dev-ops/WatchTower/app
     dockerfilePath: ./notification-service/Dockerfile
     dockerContext: ./notification-service
     plan: free
