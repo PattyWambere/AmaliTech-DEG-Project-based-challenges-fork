@@ -1,0 +1,66 @@
+{
+  "annotations": { "list": [] },
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Order Service Request Rate",
+      "targets": [
+        {
+          "expr": "rate(order_service_http_requests_total[1m])",
+          "legendFormat": "order-service"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Tracking Service Request Rate",
+      "targets": [
+        {
+          "expr": "rate(tracking_service_http_requests_total[1m])",
+          "legendFormat": "tracking-service"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Notification Service Request Rate",
+      "targets": [
+        {
+          "expr": "rate(notification_service_http_requests_total[1m])",
+          "legendFormat": "notification-service"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate (5xx)",
+      "targets": [
+        {
+          "expr": "rate(order_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "order errors"
+        },
+        {
+          "expr": "rate(tracking_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "tracking errors"
+        },
+        {
+          "expr": "rate(notification_service_http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "notification errors"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Service Health (UP = 1)",
+      "targets": [
+        {
+          "expr": "up",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "title": "WatchTower Dashboard",
+  "version": 2
+}

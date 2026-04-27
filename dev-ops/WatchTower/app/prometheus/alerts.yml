@@ -1,0 +1,34 @@
+groups:
+  - name: watchtower-alerts
+    rules:
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service is down"
+          description: "A service has been down for more than 1 minute."
+
+      - alert: HighErrorRate
+        expr: (
+          rate(order_service_http_requests_total{status=~"5.."}[5m])
+          /
+          rate(order_service_http_requests_total[5m])
+        ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "More than 5% of requests are failing."
+
+      - alert: ServiceNotScraping
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Metrics not scraping"
+          description: "Prometheus has not scraped a service."
