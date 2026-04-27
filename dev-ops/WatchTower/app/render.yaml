@@ -32,7 +32,7 @@ services:
       - key: PORT
         value: 3003
 
-- type: web
+  - type: web
     name: prometheus
     runtime: docker
     rootDir: dev-ops/WatchTower/app
