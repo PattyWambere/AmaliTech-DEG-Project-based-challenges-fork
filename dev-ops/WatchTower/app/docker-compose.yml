@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   order-service:
     build: ./order-service
@@ -33,6 +31,27 @@ services:
       - .env
     networks:
       - watchtower-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - watchtower-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - watchtower-net      
 
 networks:
   watchtower-net:
