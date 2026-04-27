@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: order-service
+    runtime: docker
+    dockerfilePath: ./order-service/Dockerfile
+    dockerContext: ./order-service
+    envVars:
+      - key: PORT
+        value: 3001
+
+  - type: web
+    name: tracking-service
+    runtime: docker
+    dockerfilePath: ./tracking-service/Dockerfile
+    dockerContext: ./tracking-service
+    envVars:
+      - key: PORT
+        value: 3002
+
+  - type: web
+    name: notification-service
+    runtime: docker
+    dockerfilePath: ./notification-service/Dockerfile
+    dockerContext: ./notification-service
+    envVars:
+      - key: PORT
+        value: 3003
+
+  - type: web
+    name: prometheus
+    runtime: docker
+    image:
+      url: prom/prometheus:latest
+    envVars: []
+
+  - type: web
+    name: grafana
+    runtime: docker
+    image:
+      url: grafana/grafana:latest
+    envVars:
+      - key: GF_SECURITY_ADMIN_PASSWORD
+        value: admin
