@@ -28,16 +28,15 @@ services:
 
   - type: web
     name: prometheus
-    runtime: docker
+    runtime: image
     image:
-      url: prom/prometheus:latest
-    envVars: []
+      url: docker.io/prom/prometheus:latest
 
   - type: web
     name: grafana
-    runtime: docker
+    runtime: image
     image:
-      url: grafana/grafana:latest
+      url: docker.io/grafana/grafana:latest
     envVars:
       - key: GF_SECURITY_ADMIN_PASSWORD
         value: admin
